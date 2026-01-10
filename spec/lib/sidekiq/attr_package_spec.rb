@@ -7,6 +7,8 @@ RSpec.describe Sidekiq::AttrPackage do
   let(:redis_double) { instance_double(Redis::Namespace) }
 
   before do
+    # Reset memoized redis instance to ensure our mock is used
+    described_class.instance_variable_set(:@redis, nil)
     allow(Redis::Namespace).to receive(:new).and_return(redis_double)
   end
 

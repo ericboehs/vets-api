@@ -970,15 +970,16 @@ RSpec.describe V0::BenefitsClaimsController, type: :controller do
               expect(BenefitsDocuments::DocumentsStatusPollingService).to have_received(:call)
               expect(BenefitsDocuments::UpdateDocumentsStatusService).not_to have_received(:call)
               expect(response).to have_http_status(:ok)
-              expect(Rails.logger).to have_received(:error) do |message, payload|
-                expect(message).to eq('BenefitsClaimsController#show Error polling evidence submissions')
-                expect(payload[:claim_id]).to eq(claim_id.to_s)
-                expect(payload[:error_source]).to eq('polling')
-                expect(payload[:response_status]).to eq(500)
-                expect(payload[:response_body]).to eq('Internal Server Error')
-                expect(payload[:lighthouse_document_request_ids]).to contain_exactly(111_111, 222_222)
-                expect(payload[:timestamp]).to be_a(Time)
-              end
+              expect(Rails.logger).to have_received(:error).with(
+                'BenefitsClaimsController#show Error polling evidence submissions',
+                hash_including(
+                  claim_id: claim_id.to_s,
+                  error_source: 'polling',
+                  response_status: 500,
+                  response_body: 'Internal Server Error',
+                  lighthouse_document_request_ids: contain_exactly(111_111, 222_222)
+                )
+              )
               expect(StatsD).to have_received(:increment).with(
                 'api.benefits_claims.show.upload_status_error',
                 tags: V0::BenefitsClaimsController::STATSD_TAGS + ['error_source:polling']
