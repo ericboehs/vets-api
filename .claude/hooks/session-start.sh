@@ -13,7 +13,7 @@ echo "=== Setting up vets-api development environment ==="
 # ============================================================================
 echo "Installing system dependencies..."
 apt-get update -qq 2>/dev/null || true
-apt-get install -y -qq libpq-dev pdftk-java postgresql-16-postgis-3 2>/dev/null || true
+apt-get install -y -qq libpq-dev pdftk-java postgresql-16-postgis-3 poppler-utils imagemagick tesseract-ocr tesseract-ocr-eng 2>/dev/null || true
 
 # ============================================================================
 # Configure PostgreSQL
