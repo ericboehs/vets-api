@@ -188,13 +188,14 @@ RSpec.describe 'V0::Profile::ServiceHistory', type: :request do
         context 'when params creation fails' do
           it 'logs error, does not log benefits, and does not cause request error' do
             allow(BenefitsDiscovery::Params).to receive(:service_history_params).and_raise(StandardError.new('oops'))
-            expect(Rails.logger).to receive(:error).with('Error logging eligible benefits: oops')
+            allow(Rails.logger).to receive(:error)
             expect(Lighthouse::BenefitsDiscovery::LogEligibleBenefitsJob).not_to receive(:perform_async)
             VCR.use_cassette('va_profile/military_personnel/post_read_service_history_200') do
               get '/v0/profile/service_history'
             end
 
             expect(response).to have_http_status(:ok)
+            expect(Rails.logger).to have_received(:error).with('Error logging eligible benefits: oops')
           end
         end
       end
