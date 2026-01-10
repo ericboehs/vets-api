@@ -6,7 +6,7 @@ Rails.application.reloader.to_prepare do
   # OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
   BGS.configure do |config|
     config.application = Settings.bgs.application
-    config.client_ip = Socket.ip_address_list.detect(&:ipv4_private?).ip_address
+    config.client_ip = Socket.ip_address_list.detect(&:ipv4_private?)&.ip_address || '127.0.0.1'
     config.client_station_id = Settings.bgs.client_station_id
     config.client_username = Settings.bgs.client_username
     config.env = Settings.bgs.env
