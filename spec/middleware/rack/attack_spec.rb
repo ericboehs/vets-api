@@ -83,6 +83,8 @@ RSpec.describe Rack::Attack do
   end
 
   describe 'medical_copays/ip' do
+    let(:headers) { { 'X-Real-Ip' => '1.2.3.4' } }
+
     before do
       allow_any_instance_of(MedicalCopays::VBS::Service).to receive(:get_copays).and_return([])
     end
@@ -110,6 +112,8 @@ RSpec.describe Rack::Attack do
     let(:limit) { 30 }
 
     before do
+      allow_any_instance_of(FacilitiesApi::V2::Lighthouse::Client).to receive(:get_facilities).and_return([])
+
       limit.times do
         post endpoint, nil, headers
         expect(last_response).not_to have_http_status(:too_many_requests)
@@ -141,6 +145,9 @@ RSpec.describe Rack::Attack do
     let(:limit) { 8 }
 
     before do
+      allow_any_instance_of(FacilitiesApi::V2::PPMS::Client).to receive(:provider_locator).and_return([])
+      allow_any_instance_of(FacilitiesApi::V2::PPMS::Client).to receive(:pos_locator).and_return([])
+
       limit.times do
         get endpoint, nil, headers
         expect(last_response).not_to have_http_status(:too_many_requests)
